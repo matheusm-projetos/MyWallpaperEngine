@@ -38,7 +38,9 @@
                             <!-- Botão -->
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="🖼️ " FontSize="28" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <Border Grid.Column="0" Width="80" Height="50" Margin="0,0,15,0" CornerRadius="6" ClipToBounds="True" BorderBrush="#DEE2E6" BorderThickness="1">
+                            <Image Source="{Binding CaminhoCompleto}" Stretch="UniformToFill"/>
+                        </Border>
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="{Binding NomeExibicao}" FontWeight="Bold" FontSize="15" Foreground="#212529" TextTrimming="CharacterEllipsis"/>
