@@ -1,0 +1,76 @@
+﻿<Window x:Class="MyWallpaperEngine.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyWallpaperEngine.Views"
+        xmlns:vm="clr-namespace:MyWallpaperEngine.ViewModels"
+        mc:Ignorable="d"
+        Title="MyWallpaperEngine - Dev Build" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding StatusMessage}" 
+                   FontSize="16" FontWeight="Bold" Foreground="#444" 
+                   Grid.Row="0" Margin="0,0,0,15"/>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="1" Padding="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!-- Mudamos para um Grid para alinhar o botão à direita -->
+                    <Grid Margin="5,10" Width="730">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Ícone -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Textos -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Botão -->
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="🖼️ " FontSize="28" VerticalAlignment="Center" Margin="0,0,15,0"/>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding NomeExibicao}" FontWeight="Bold" FontSize="15" Foreground="#212529" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding CaminhoCompleto}" FontSize="11" Foreground="#6C757D" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                        </StackPanel>
+
+                        <!-- Botão Aplicar: Passa o próprio item (Wallpaper) como parâmetro para o comando -->
+                        <Button Grid.Column="2" Content="Definir Fundo" 
+                                Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding}"
+                                Padding="15,8" Background="#0078D4" Foreground="White" FontWeight="SemiBold" Cursor="Hand" BorderThickness="0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Button Grid.Row="2" Content="📂 Importar Pasta de Imagens" 
+                Command="{Binding SelecionarPastaCommand}"
+                Height="45" Margin="0,15,0,0" 
+                Background="#28A745" Foreground="White" FontSize="15"
+                FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+    </Grid>
+</Window>

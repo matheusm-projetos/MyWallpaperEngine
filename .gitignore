@@ -1,0 +1,13 @@
+# Ignora pastas de compilação do Visual Studio
+[Bb]in/
+[Oo]bj/
+
+# Ignora o banco de dados pessoal do SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Ignora arquivos de configuração de usuário do Visual Studio
+.vs/
+.vs/
+*.user
