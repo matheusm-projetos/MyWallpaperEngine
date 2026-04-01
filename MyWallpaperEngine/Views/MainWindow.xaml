@@ -3,113 +3,100 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MyWallpaperEngine.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:MyWallpaperEngine.ViewModels"
         mc:Ignorable="d"
-        Title="MyWallpaperEngine - Dev Build" Height="500" Width="800"
-        WindowStartupLocation="CenterScreen">
+        Title="MyWallpaperEngine - Pro Build" Height="650" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
 
+    <!-- Liga a Tela ao Cérebro -->
     <Window.DataContext>
-        <vm:MainViewModel/>
+        <vm:MainViewModel />
     </Window.DataContext>
 
-    <Grid Margin="15">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding StatusMessage}" 
-                   FontSize="16" FontWeight="Bold" Foreground="#444" 
-                   Grid.Row="0" Margin="0,0,0,15"/>
+        <!-- Título e Status -->
+        <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="1" Padding="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <!-- A Galeria de Fotos -->
+        <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="Transparent">
+
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5,10" Width="730">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <!-- Ícone -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Textos -->
-                            <ColumnDefinition Width="Auto"/>
-                            <!-- Botão -->
-                        </Grid.ColumnDefinitions>
+                    <materialDesign:Card Width="220" Margin="10" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp3">
+                        <StackPanel>
+                            <!-- A Miniatura -->
+                            <Border Height="130" ClipToBounds="True">
+                                <Image Source="{Binding CaminhoCompleto}" Stretch="UniformToFill" />
+                            </Border>
 
-                        <Border Grid.Column="0" Width="80" Height="50" Margin="0,0,15,0" CornerRadius="6" ClipToBounds="True" BorderBrush="#DEE2E6" BorderThickness="1">
-                            <Image Source="{Binding CaminhoCompleto}" Stretch="UniformToFill"/>
-                        </Border>
+                            <!-- O Nome da Foto -->
+                            <TextBlock Text="{Binding NomeExibicao}" FontWeight="SemiBold" Margin="10,12,10,5" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
 
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding NomeExibicao}" FontWeight="Bold" FontSize="15" Foreground="#212529" TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Text="{Binding CaminhoCompleto}" FontSize="11" Foreground="#6C757D" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                            <!-- Botão estilo Preenchido (Raised) e Adicionei um ToolTip -->
+                            <Button Content="Definir Fundo" 
+                                    Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                    CommandParameter="{Binding}" 
+                                    Margin="10,0,10,12" 
+                                    Style="{StaticResource MaterialDesignRaisedButton}"
+                                    ToolTip="Aplicar este papel de parede agora"
+                                    Cursor="Hand"/>
                         </StackPanel>
-
-                        <!-- Botão Aplicar: Passa o próprio item (Wallpaper) como parâmetro para o comando -->
-                        <Button Grid.Column="2" Content="Definir Fundo" 
-                                Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                CommandParameter="{Binding}"
-                                Padding="15,8" Background="#0078D4" Foreground="White" FontWeight="SemiBold" Cursor="Hand" BorderThickness="0">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="4"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                    </Grid>
+                    </materialDesign:Card>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Grid Grid.Row="2" Margin="0,15,0,0">
+        <!-- Rodapé com os Controles -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <!-- Espaço do botão importar -->
                 <ColumnDefinition Width="*"/>
-                <!-- Espaço vazio pra empurrar as coisas pros cantos -->
                 <ColumnDefinition Width="Auto"/>
-                <!-- Espaço do seletor de tempo -->
                 <ColumnDefinition Width="Auto"/>
-                <!-- Espaço do botão do timer -->
             </Grid.ColumnDefinitions>
 
-            <!-- Botão de Importar -->
+            <!-- Botão Importar -->
             <Button Grid.Column="0" Content="📂 Importar Pasta" 
-                    Command="{Binding SelecionarPastaCommand}"
-                    Height="40" Padding="15,0"
-                    Background="#28A745" Foreground="White" FontSize="14"
-                    FontWeight="Bold" Cursor="Hand" BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Command="{Binding SelecionarPastaCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
+                    Background="#28A745" BorderBrush="#28A745" Foreground="White" Height="40" Padding="15,0"
+                    Cursor="Hand"/>
 
-            <!-- A Caixinha de escolha do tempo (ComboBox) -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,15,0">
-                <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" Foreground="#444"/>
-
-                <ComboBox ItemsSource="{Binding OpcoesTempo}" 
-                          SelectedItem="{Binding TempoSelecionado}" 
-                          Width="60" Height="30" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-
-                <TextBlock Text="min" VerticalAlignment="Center" Margin="5,0,0,0" FontWeight="SemiBold" Foreground="#444"/>
+            <!-- Seletor de Tempo -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                <ComboBox ItemsSource="{Binding OpcoesTempo}" SelectedItem="{Binding TempoSelecionado}" Width="60" Margin="0,0,8,0"/>
+                <TextBlock Text="min" VerticalAlignment="Center" FontWeight="SemiBold"/>
             </StackPanel>
 
-            <!-- O Botão dinâmico de Ligar/Desligar -->
+            <!-- Botão do Timer / Shuffle -->
             <Button Grid.Column="3" Content="{Binding TextoBotaoTimer}" 
-                    Command="{Binding ToggleTimerCommand}"
-                    Height="40" Padding="15,0" Width="200"
-                    Background="#6F42C1" Foreground="White" FontSize="14"
-                    FontWeight="Bold" Cursor="Hand" BorderThickness="0">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    Command="{Binding ToggleTimerCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
+                    Background="{DynamicResource PrimaryHueMidBrush}" BorderBrush="{DynamicResource PrimaryHueMidBrush}" 
+                    Foreground="White" Width="220" Height="40"
+                    Cursor="Hand"/>
         </Grid>
     </Grid>
 </Window>
