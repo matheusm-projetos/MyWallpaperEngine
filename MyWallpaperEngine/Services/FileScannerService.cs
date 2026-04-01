@@ -28,7 +28,6 @@ namespace MyWallpaperEngine.Services
 
                 foreach (var arquivoPath in arquivos)
                 {
-                    //Pega a extensão do aquivo em minúsculo
                     var extensao = Path.GetExtension(arquivoPath).ToLower();
 
                     if (_extensoesPermitidas.Contains(extensao))

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyWallpaperEngine.Models
 {
+    //Define a classe Wallpaper e define seus atributos
     public class Wallpaper
     {
         [Key]

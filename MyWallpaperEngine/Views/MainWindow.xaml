@@ -27,7 +27,6 @@
         <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" Background="#F8F9FA" BorderBrush="#DEE2E6" BorderThickness="1" Padding="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <!-- Mudamos para um Grid para alinhar o botão à direita -->
                     <Grid Margin="5,10" Width="730">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -63,16 +62,54 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Button Grid.Row="2" Content="📂 Importar Pasta de Imagens" 
-                Command="{Binding SelecionarPastaCommand}"
-                Height="45" Margin="0,15,0,0" 
-                Background="#28A745" Foreground="White" FontSize="15"
-                FontWeight="Bold" Cursor="Hand" BorderThickness="0">
-            <Button.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="6"/>
-                </Style>
-            </Button.Resources>
-        </Button>
+        <Grid Grid.Row="2" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- Espaço do botão importar -->
+                <ColumnDefinition Width="*"/>
+                <!-- Espaço vazio pra empurrar as coisas pros cantos -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Espaço do seletor de tempo -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Espaço do botão do timer -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Botão de Importar -->
+            <Button Grid.Column="0" Content="📂 Importar Pasta" 
+                    Command="{Binding SelecionarPastaCommand}"
+                    Height="40" Padding="15,0"
+                    Background="#28A745" Foreground="White" FontSize="14"
+                    FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- A Caixinha de escolha do tempo (ComboBox) -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,15,0">
+                <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" Foreground="#444"/>
+
+                <ComboBox ItemsSource="{Binding OpcoesTempo}" 
+                          SelectedItem="{Binding TempoSelecionado}" 
+                          Width="60" Height="30" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+
+                <TextBlock Text="min" VerticalAlignment="Center" Margin="5,0,0,0" FontWeight="SemiBold" Foreground="#444"/>
+            </StackPanel>
+
+            <!-- O Botão dinâmico de Ligar/Desligar -->
+            <Button Grid.Column="3" Content="{Binding TextoBotaoTimer}" 
+                    Command="{Binding ToggleTimerCommand}"
+                    Height="40" Padding="15,0" Width="200"
+                    Background="#6F42C1" Foreground="White" FontSize="14"
+                    FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

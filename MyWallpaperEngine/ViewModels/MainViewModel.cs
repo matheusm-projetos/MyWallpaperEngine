@@ -4,7 +4,9 @@ using Microsoft.Win32;
 using MyWallpaperEngine.Data;
 using MyWallpaperEngine.Models;
 using MyWallpaperEngine.Services;
+using System;
 using System.Collections.ObjectModel;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,20 +21,79 @@ namespace MyWallpaperEngine.ViewModels
         [ObservableProperty]
         private string statusMessage;
 
+        [ObservableProperty]
+        private int tempoSelecionado = 5;
+
+        [ObservableProperty]
+        private string textoBotaoTimer = "Shuffle: Off";
+
+        [ObservableProperty]
+        private bool isTimerAtivo = false;
+
+        public ObservableCollection<int> OpcoesTempo { get; } = new() { 1, 5, 10, 15, 30, 60 };
+
+
         // Instância do serviço de escaneamento de arquivos
         private readonly FileScannerService _scannerService;
         private readonly WallpaperChangerService _changerService;
+        private readonly WallpaperTimerService _timerService;
 
         public MainViewModel()
         {
             Wallpapers = new ObservableCollection<Wallpaper>();
+
             _scannerService = new FileScannerService();
+
             _changerService = new WallpaperChangerService();
+            
+            _timerService = new WallpaperTimerService();
+            _timerService.TempoEsgotado += OnTimerTempoEsgotado;
+
             StatusMessage = "Pronto para importar imagens!";
 
             CarregarDados();
         }
 
+        //Quando o timer termina, ativa o evento de troca de wallpaper
+        private void OnTimerTempoEsgotado(object? sender, EventArgs e)
+        {
+            if (Wallpapers.Count == 0) return;
+
+            var random = new Random();
+            int index = random.Next(Wallpapers.Count);
+
+            var wallpaperSorteado = Wallpapers[index];
+            AplicarWallpaper(wallpaperSorteado);
+        }
+
+        //Ativa e desativa o shuffle juntamente do timer
+        [RelayCommand]
+        public void ToggleTimer()
+        {
+            if (IsTimerAtivo)
+            {
+                _timerService.Parar();
+                IsTimerAtivo = false;
+
+                TextoBotaoTimer = "Shuffle: Off";
+                StatusMessage = "Timer parado.";
+            }
+            else
+            {
+                if (Wallpapers.Count == 0)
+                {
+                    StatusMessage = "Adicione wallpapers para ligar o Shuffle!";
+                    return;
+                }
+
+                _timerService.Iniciar(TempoSelecionado);
+                IsTimerAtivo = true;
+                TextoBotaoTimer = "Shuffle: On";
+                StatusMessage = $"Piloto automático iniciado. Trocando a cada {TempoSelecionado} min.";
+            }
+        }
+
+        //Carrega as imagens da memória para a listagem principal
         public void CarregarDados()
         {
 
@@ -59,6 +120,7 @@ namespace MyWallpaperEngine.ViewModels
             }
         }
 
+        //Seleciona a pasta de que as imagens serão carregadas
         [RelayCommand]
         public void SelecionarPasta()
         {
@@ -110,8 +172,9 @@ namespace MyWallpaperEngine.ViewModels
             CarregarDados();
         }
 
+        //Aplica o wallpaper selecionado na Área de Trabalho
         [RelayCommand]
-        public void AplicarWallpaper(Wallpaper WallpaperSelecionado)
+        public void AplicarWallpaper(Wallpaper? WallpaperSelecionado)
         {
             if (WallpaperSelecionado == null) return;
 
