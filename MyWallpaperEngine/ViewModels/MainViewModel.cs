@@ -143,7 +143,7 @@ namespace MyWallpaperEngine.ViewModels
                 else
                 {
                     StatusMessage = "Nenhuma imagem válida encontrada nessa pasta.";
-                    MessageBox.Show("Não encontrei imagens válidas (.jpg, .png) nessa pasta", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    System.Windows.MessageBox.Show("Não encontrei imagens válidas (.jpg, .png) nessa pasta", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -189,7 +189,7 @@ namespace MyWallpaperEngine.ViewModels
             else
             {
                 StatusMessage = "Falha ao aplicar wallpaper.";
-                MessageBox.Show("Não foi possível encontrar o arquivo de imagem", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Não foi possível encontrar o arquivo de imagem", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
