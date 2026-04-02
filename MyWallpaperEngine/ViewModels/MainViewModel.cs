@@ -228,5 +228,14 @@ namespace MyWallpaperEngine.ViewModels
                 }
             }
         }
+
+        //comado teste
+        [RelayCommand]
+        private void SimularErro()
+        {
+            StatusMessage = "Iniciando teste de colisão...";
+
+            throw new Exception("BOOM! 💥 Esse é um erro simulado para testar o Airbag global do aplicativo.");
+        }
     }
 }

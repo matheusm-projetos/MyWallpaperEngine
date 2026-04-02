@@ -22,7 +22,7 @@
         <vm:MainViewModel />
     </Window.DataContext>
 
-    <!-- 👇 Declarando o nosso Tradutor para o XAML conhecer -->
+    <!-- Conversor das Imagens -->
     <Window.Resources>
         <conv:ImagePathConverter x:Key="ImageConverter" />
     </Window.Resources>
@@ -54,8 +54,18 @@
                         Background="#28A745" BorderBrush="#28A745" Foreground="White" Height="45"
                         Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"/>
 
+                <!-- Botão de teste, erro forçado -->
+                <Button Grid.Row="2" Content="💥 Testar Airbag"
+                        Command="{Binding SimularErroCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Foreground="#E53935" BorderBrush="#E53935"
+                        VerticalAlignment="Bottom" Margin="0,0,0,20"
+                        Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"
+                        ToolTip="Gera um erro fatal para testar o tratamento global de exceções"/>
+
+                <!-- Controles do Modo Shuffle -->
                 <StackPanel Grid.Row="3">
-                    <TextBlock Text="Piloto Automático" FontWeight="Bold" Margin="0,0,0,15" Foreground="#AAA"/>
+                    <TextBlock Text="Opções de Shuffle" FontWeight="Bold" Margin="0,0,0,15" Foreground="#AAA"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
                         <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -97,7 +107,7 @@
                         <materialDesign:Card Width="220" Margin="10" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp3" Background="{DynamicResource MaterialDesignDarkBackground}">
                             <StackPanel>
 
-                                <!-- 👇 A mágica acontece aqui! Chamamos o tradutor para criar a miniatura -->
+                                
                                 <Border Height="130" ClipToBounds="True">
                                     <Image Source="{Binding CaminhoCompleto, Converter={StaticResource ImageConverter}, IsAsync=True}" Stretch="UniformToFill" />
                                 </Border>
