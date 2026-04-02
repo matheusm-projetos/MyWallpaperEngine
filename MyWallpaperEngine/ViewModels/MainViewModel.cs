@@ -192,5 +192,41 @@ namespace MyWallpaperEngine.ViewModels
                 System.Windows.MessageBox.Show("Não foi possível encontrar o arquivo de imagem", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        [RelayCommand]
+        private void DeletarWallpaper(Wallpaper? wallpaperParaDeletar)
+        {
+            if (wallpaperParaDeletar == null) return;
+
+            var resposta = System.Windows.MessageBox.Show(
+                $"Tem certeza que deseja deletar '{wallpaperParaDeletar.NomeExibicao}' da galeria?",
+                "Confirmar Exclusão",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (resposta == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    using (var context = new AppDbContext())
+                    {
+                        var ItemNoBanco = context.Wallpapers.Find(wallpaperParaDeletar.Id);
+                        if (ItemNoBanco != null)
+                        {
+                            context.Wallpapers.Remove(ItemNoBanco);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    Wallpapers.Remove(wallpaperParaDeletar);
+                    StatusMessage = $"'{wallpaperParaDeletar.NomeExibicao}' deletado da galeria.";
+                }
+                catch (Exception ex)
+                {
+                    StatusMessage = "Erro ao excluir imagem.";
+                    System.Windows.MessageBox.Show($"Ocorreu um erro no banco de dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
     }
 }

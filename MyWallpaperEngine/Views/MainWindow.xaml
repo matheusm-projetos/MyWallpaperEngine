@@ -17,7 +17,6 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
 
-    <!-- Liga a Tela ao Cérebro -->
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
@@ -53,14 +52,35 @@
                             <!-- O Nome da Foto -->
                             <TextBlock Text="{Binding NomeExibicao}" FontWeight="SemiBold" Margin="10,12,10,5" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
 
-                            <!-- Botão estilo Preenchido (Raised) e Adicionei um ToolTip -->
-                            <Button Content="Definir Fundo" 
-                                    Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                    CommandParameter="{Binding}" 
-                                    Margin="10,0,10,12" 
-                                    Style="{StaticResource MaterialDesignRaisedButton}"
-                                    ToolTip="Aplicar este papel de parede agora"
-                                    Cursor="Hand"/>
+                            <!-- 👇 NOVO: Dividimos o espaço inferior em duas colunas (Botão Aplicar + Botão Lixeira) -->
+                            <Grid Margin="10,0,10,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Botão Definir Fundo -->
+                                <Button Grid.Column="0" Content="Definir Fundo" 
+                                        Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                        CommandParameter="{Binding}" 
+                                        Margin="0,0,5,0" 
+                                        Style="{StaticResource MaterialDesignRaisedButton}"
+                                        ToolTip="Aplicar este papel de parede agora"
+                                        Cursor="Hand"/>
+
+                                <!-- Botão Lixeira (Vermelho) -->
+                                <Button Grid.Column="1" 
+                                        Command="{Binding DataContext.DeletarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                        CommandParameter="{Binding}" 
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Foreground="#E53935" BorderBrush="#E53935" Padding="8,0"
+                                        ToolTip="Excluir imagem da galeria"
+                                        Cursor="Hand">
+                                    <!-- Usamos um ícone vetorial da própria biblioteca -->
+                                    <materialDesign:PackIcon Kind="DeleteOutline" />
+                                </Button>
+                            </Grid>
+
                         </StackPanel>
                     </materialDesign:Card>
                 </DataTemplate>
