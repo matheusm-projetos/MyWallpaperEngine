@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:MyWallpaperEngine.ViewModels"
+        xmlns:conv="clr-namespace:MyWallpaperEngine.Converters"
         mc:Ignorable="d"
-        Title="MyWallpaperEngine - Pro Build" Height="650" Width="1000"
+        Title="MyWallpaperEngine - Pro Build" Height="720" Width="1100"
         WindowStartupLocation="CenterScreen"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -21,102 +22,117 @@
         <vm:MainViewModel />
     </Window.DataContext>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <!-- 👇 Declarando o nosso Tradutor para o XAML conhecer -->
+    <Window.Resources>
+        <conv:ImagePathConverter x:Key="ImageConverter" />
+    </Window.Resources>
 
-        <!-- Título e Status -->
-        <TextBlock Grid.Row="0" Text="{Binding StatusMessage}" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <!-- A Galeria de Fotos -->
-        <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="Transparent">
+        <!-- REGIAO 1: SIDEBAR -->
+        <Border Grid.Column="0" Background="{DynamicResource MaterialDesignDarkBackground}" BorderBrush="#333" BorderThickness="0,0,1,0">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,40">
+                    <materialDesign:PackIcon Kind="MonitorDashboard" Width="32" Height="32" Foreground="{DynamicResource PrimaryHueMidBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="MyWallpaper" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </StackPanel>
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <materialDesign:Card Width="220" Margin="10" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp3">
-                        <StackPanel>
-                            <!-- A Miniatura -->
-                            <Border Height="130" ClipToBounds="True">
-                                <Image Source="{Binding CaminhoCompleto}" Stretch="UniformToFill" />
-                            </Border>
+                <Button Grid.Row="1" Content="📂 Importar Pasta" 
+                        Command="{Binding SelecionarPastaCommand}" 
+                        Style="{StaticResource MaterialDesignRaisedButton}" 
+                        Background="#28A745" BorderBrush="#28A745" Foreground="White" Height="45"
+                        Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"/>
 
-                            <!-- O Nome da Foto -->
-                            <TextBlock Text="{Binding NomeExibicao}" FontWeight="SemiBold" Margin="10,12,10,5" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
+                <StackPanel Grid.Row="3">
+                    <TextBlock Text="Piloto Automático" FontWeight="Bold" Margin="0,0,0,15" Foreground="#AAA"/>
 
-                            <!-- 👇 NOVO: Dividimos o espaço inferior em duas colunas (Botão Aplicar + Botão Lixeira) -->
-                            <Grid Margin="10,0,10,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ComboBox ItemsSource="{Binding OpcoesTempo}" SelectedItem="{Binding TempoSelecionado}" Width="60"/>
+                        <TextBlock Text="min" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
 
-                                <!-- Botão Definir Fundo -->
-                                <Button Grid.Column="0" Content="Definir Fundo" 
-                                        Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                        CommandParameter="{Binding}" 
-                                        Margin="0,0,5,0" 
-                                        Style="{StaticResource MaterialDesignRaisedButton}"
-                                        ToolTip="Aplicar este papel de parede agora"
-                                        Cursor="Hand"/>
+                    <Button Content="{Binding TextoBotaoTimer}" 
+                            Command="{Binding ToggleTimerCommand}" 
+                            Style="{StaticResource MaterialDesignRaisedButton}" 
+                            Background="{DynamicResource PrimaryHueMidBrush}" BorderBrush="{DynamicResource PrimaryHueMidBrush}" 
+                            Foreground="White" Height="45" Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-                                <!-- Botão Lixeira (Vermelho) -->
-                                <Button Grid.Column="1" 
-                                        Command="{Binding DataContext.DeletarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                        CommandParameter="{Binding}" 
-                                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                                        Foreground="#E53935" BorderBrush="#E53935" Padding="8,0"
-                                        ToolTip="Excluir imagem da galeria"
-                                        Cursor="Hand">
-                                    <!-- Usamos um ícone vetorial da própria biblioteca -->
-                                    <materialDesign:PackIcon Kind="DeleteOutline" />
-                                </Button>
-                            </Grid>
+        <!-- REGIAO 2: MAIN AREA -->
+        <Grid Grid.Column="1" Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                        </StackPanel>
-                    </materialDesign:Card>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <!-- Rodapé com os Controles -->
-        <Grid Grid.Row="2" Margin="0,20,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- Botão Importar -->
-            <Button Grid.Column="0" Content="📂 Importar Pasta" 
-                    Command="{Binding SelecionarPastaCommand}" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Background="#28A745" BorderBrush="#28A745" Foreground="White" Height="40" Padding="15,0"
-                    Cursor="Hand"/>
-
-            <!-- Seletor de Tempo -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
-                <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
-                <ComboBox ItemsSource="{Binding OpcoesTempo}" SelectedItem="{Binding TempoSelecionado}" Width="60" Margin="0,0,8,0"/>
-                <TextBlock Text="min" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="Sua Galeria" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="{Binding StatusMessage}" FontSize="14" Foreground="{DynamicResource PrimaryHueLightBrush}" Margin="0,5,0,0"/>
             </StackPanel>
 
-            <!-- Botão do Timer / Shuffle -->
-            <Button Grid.Column="3" Content="{Binding TextoBotaoTimer}" 
-                    Command="{Binding ToggleTimerCommand}" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Background="{DynamicResource PrimaryHueMidBrush}" BorderBrush="{DynamicResource PrimaryHueMidBrush}" 
-                    Foreground="White" Width="220" Height="40"
-                    Cursor="Hand"/>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="Transparent">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card Width="220" Margin="10" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp3" Background="{DynamicResource MaterialDesignDarkBackground}">
+                            <StackPanel>
+
+                                <!-- 👇 A mágica acontece aqui! Chamamos o tradutor para criar a miniatura -->
+                                <Border Height="130" ClipToBounds="True">
+                                    <Image Source="{Binding CaminhoCompleto, Converter={StaticResource ImageConverter}, IsAsync=True}" Stretch="UniformToFill" />
+                                </Border>
+
+                                <TextBlock Text="{Binding NomeExibicao}" FontWeight="SemiBold" Margin="10,12,10,5" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
+
+                                <Grid Margin="10,0,10,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0" Content="Definir Fundo" 
+                                            Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                            CommandParameter="{Binding}" 
+                                            Margin="0,0,5,0" 
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            ToolTip="Aplicar este papel de parede agora"
+                                            Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6"/>
+
+                                    <Button Grid.Column="1" 
+                                            Command="{Binding DataContext.DeletarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                            CommandParameter="{Binding}" 
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Foreground="#E53935" BorderBrush="#E53935" Padding="8,0"
+                                            ToolTip="Excluir imagem da galeria"
+                                            Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" />
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Grid>
 </Window>

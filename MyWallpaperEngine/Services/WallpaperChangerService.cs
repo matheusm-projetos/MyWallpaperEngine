@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MyWallpaperEngine.Services
 {
-    internal class WallpaperChangerService
+    public class WallpaperChangerService
     {
         private const int SPI_SETDESKWALLPAPER = 0x0014;
         private const int SPIF_UPDATEINIFILE = 0x01;

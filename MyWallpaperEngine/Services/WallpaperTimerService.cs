@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 namespace MyWallpaperEngine.Services
 {
-    class WallpaperTimerService
+    public class WallpaperTimerService
     {
         private readonly DispatcherTimer _timer;
 
