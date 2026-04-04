@@ -7,142 +7,170 @@
         xmlns:vm="clr-namespace:MyWallpaperEngine.ViewModels"
         xmlns:conv="clr-namespace:MyWallpaperEngine.Converters"
         mc:Ignorable="d"
-        Title="MyWallpaperEngine - Pro Build" Height="720" Width="1100"
+        Title="MyWallpaperEngine" Height="720" Width="1100"
         WindowStartupLocation="CenterScreen"
         
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.Foreground="#EAEAEA"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        Background="Transparent">
 
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
 
-    <!-- Conversor das Imagens -->
     <Window.Resources>
         <conv:ImagePathConverter x:Key="ImageConverter" />
     </Window.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <!-- REGIAO 1: SIDEBAR -->
-        <Border Grid.Column="0" Background="{DynamicResource MaterialDesignDarkBackground}" BorderBrush="#333" BorderThickness="0,0,1,0">
-            <Grid Margin="20">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,40">
-                    <materialDesign:PackIcon Kind="MonitorDashboard" Width="32" Height="32" Foreground="{DynamicResource PrimaryHueMidBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="MyWallpaper" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                </StackPanel>
-
-                <Button Grid.Row="1" Content="📂 Importar Pasta" 
-                        Command="{Binding SelecionarPastaCommand}" 
-                        Style="{StaticResource MaterialDesignRaisedButton}" 
-                        Background="#28A745" BorderBrush="#28A745" Foreground="White" Height="45"
-                        Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"/>
-
-                <!-- Botão de teste, erro forçado -->
-                <Button Grid.Row="2" Content="💥 Testar Airbag"
-                        Command="{Binding SimularErroCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Foreground="#E53935" BorderBrush="#E53935"
-                        VerticalAlignment="Bottom" Margin="0,0,0,20"
-                        Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"
-                        ToolTip="Gera um erro fatal para testar o tratamento global de exceções"/>
-
-                <!-- Controles do Modo Shuffle -->
-                <StackPanel Grid.Row="3">
-                    <TextBlock Text="Opções de Shuffle" FontWeight="Bold" Margin="0,0,0,15" Foreground="#AAA"/>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                        <TextBlock Text="Trocar a cada:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <ComboBox ItemsSource="{Binding OpcoesTempo}" SelectedItem="{Binding TempoSelecionado}" Width="60"/>
-                        <TextBlock Text="min" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    </StackPanel>
-
-                    <Button Content="{Binding TextoBotaoTimer}" 
-                            Command="{Binding ToggleTimerCommand}" 
-                            Style="{StaticResource MaterialDesignRaisedButton}" 
-                            Background="{DynamicResource PrimaryHueMidBrush}" BorderBrush="{DynamicResource PrimaryHueMidBrush}" 
-                            Foreground="White" Height="45" Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="8"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- REGIAO 2: MAIN AREA -->
-        <Grid Grid.Column="1" Margin="30">
+    <!-- Fundo principal unificado. Cinza muito escuro e fosco, quase preto. -->
+    <Border Background="#121212" CornerRadius="10" BorderBrush="#282828" BorderThickness="1" ClipToBounds="True">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <!-- Barra de Título super limpa -->
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!-- Sidebar um pouco mais fina para dar ênfase na Galeria -->
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                <TextBlock Text="Sua Galeria" FontSize="24" FontWeight="Bold"/>
-                <TextBlock Text="{Binding StatusMessage}" FontSize="14" Foreground="{DynamicResource PrimaryHueLightBrush}" Margin="0,5,0,0"/>
-            </StackPanel>
+            <!-- ========================================== -->
+            <!-- REGIAO 1: BARRA DE TÍTULO INVISÍVEL        -->
+            <!-- ========================================== -->
+            <!-- Background Transparente para mesclar com o app inteiro -->
+            <Border Grid.Row="0" Grid.ColumnSpan="2" Background="Transparent" MouseDown="TitleBar_MouseDown">
+                <Grid>
+                    <!-- Os botões da janela são super discretos agora -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                        <Button Click="BtnMinimize_Click" Width="30" Height="30" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand">
+                            <materialDesign:PackIcon Kind="Minus" Foreground="#888888" Width="18" Height="18"/>
+                        </Button>
+                        <Button Click="BtnClose_Click" Width="30" Height="30" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand" Margin="5,0,0,0">
+                            <materialDesign:PackIcon Kind="Close" Foreground="#888888" Width="16" Height="16"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="Transparent">
+            <!-- ========================================== -->
+            <!-- REGIAO 2: SIDEBAR MINIMALISTA              -->
+            <!-- ========================================== -->
+            <!-- Sem cor de fundo diferente. Apenas uma linha sutil dividindo as áreas -->
+            <Border Grid.Row="1" Grid.Column="0" BorderBrush="#222222" BorderThickness="0,0,1,0">
+                <Grid Margin="25,0,25,25">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,40">
+                        <!-- 👇 CORREÇÃO: Removido o LetterSpacing teimoso -->
+                        <TextBlock Text="MyWallpaper" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                        <TextBlock Text="Engine" FontSize="12" FontWeight="Regular" Foreground="#777777"/>
+                    </StackPanel>
 
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <materialDesign:Card Width="220" Margin="10" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp3" Background="{DynamicResource MaterialDesignDarkBackground}">
-                            <StackPanel>
+                    <!-- Botão de Ação Primária: Estilo "High Contrast" (Fundo Branco, Letra Preta) -->
+                    <Button Grid.Row="1" Command="{Binding SelecionarPastaCommand}" 
+                            Height="42" Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6" BorderThickness="0" Background="#EDEDED" Foreground="#121212">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Importar" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
 
-                                
-                                <Border Height="130" ClipToBounds="True">
-                                    <Image Source="{Binding CaminhoCompleto, Converter={StaticResource ImageConverter}, IsAsync=True}" Stretch="UniformToFill" />
-                                </Border>
+                    <Button Grid.Row="2" Content="Testar Crash" Command="{Binding SimularErroCommand}"
+                            Style="{StaticResource MaterialDesignFlatButton}" Foreground="#555555"
+                            VerticalAlignment="Bottom" Margin="0,0,0,20" Cursor="Hand" FontSize="11"/>
 
-                                <TextBlock Text="{Binding NomeExibicao}" FontWeight="SemiBold" Margin="10,12,10,5" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
+                    <!-- Controle de Timer limpo, sem caixas em volta -->
+                    <StackPanel Grid.Row="3">
+                        <TextBlock Text="Piloto Automático" FontWeight="SemiBold" Foreground="#AAAAAA" FontSize="12" Margin="0,0,0,12"/>
 
-                                <Grid Margin="10,0,10,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="Trocar a cada" VerticalAlignment="Center" Foreground="#777777" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding OpcoesTempo}" SelectedItem="{Binding TempoSelecionado}" Width="50" Foreground="#EAEAEA" BorderBrush="#333333" Margin="10,0,0,0" Padding="4,2"/>
+                            <TextBlock Text="min" VerticalAlignment="Center" Foreground="#777777" FontSize="12" Margin="5,0,0,0"/>
+                        </StackPanel>
 
-                                    <Button Grid.Column="0" Content="Definir Fundo" 
-                                            Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                            CommandParameter="{Binding}" 
-                                            Margin="0,0,5,0" 
-                                            Style="{StaticResource MaterialDesignRaisedButton}"
-                                            ToolTip="Aplicar este papel de parede agora"
-                                            Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6"/>
+                        <!-- Botão Secundário: Sem fundo, apenas borda sutil -->
+                        <Button Content="{Binding TextoBotaoTimer}" Command="{Binding ToggleTimerCommand}" 
+                                Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                Foreground="#CCCCCC" BorderBrush="#333333" Height="38" Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6" FontSize="12"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-                                    <Button Grid.Column="1" 
-                                            Command="{Binding DataContext.DeletarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                            CommandParameter="{Binding}" 
-                                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            Foreground="#E53935" BorderBrush="#E53935" Padding="8,0"
-                                            ToolTip="Excluir imagem da galeria"
-                                            Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="6">
-                                        <materialDesign:PackIcon Kind="DeleteOutline" />
-                                    </Button>
-                                </Grid>
-                            </StackPanel>
-                        </materialDesign:Card>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <!-- ========================================== -->
+            <!-- REGIAO 3: MAIN AREA (GALERIA)              -->
+            <!-- ========================================== -->
+            <Grid Grid.Row="1" Grid.Column="1" Margin="30,0,30,30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                    <TextBlock Text="Galeria" FontSize="22" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#888888" Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <ListBox Grid.Row="1" ItemsSource="{Binding Wallpapers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="Transparent">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Card Flat: Sem sombra pesada (Elevation 0), apenas borda e fundo levemente mais claro -->
+                            <materialDesign:Card Width="220" Margin="0,0,20,20" UniformCornerRadius="8" Background="#1A1A1A" BorderBrush="#252525" BorderThickness="1" materialDesign:ElevationAssist.Elevation="Dp0">
+                                <StackPanel>
+                                    <Border Height="125" ClipToBounds="True" CornerRadius="7,7,0,0">
+                                        <Image Source="{Binding CaminhoCompleto, Converter={StaticResource ImageConverter}, IsAsync=True}" Stretch="UniformToFill" />
+                                    </Border>
+
+                                    <TextBlock Text="{Binding NomeExibicao}" FontWeight="Medium" FontSize="12" Foreground="#D0D0D0" Margin="12,12,12,8" TextTrimming="CharacterEllipsis" ToolTip="{Binding CaminhoCompleto}"/>
+
+                                    <Grid Margin="12,0,12,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Botões de ação dos cards agora são discretos -->
+                                        <Button Grid.Column="0" Content="Aplicar Fundo" 
+                                                Command="{Binding DataContext.AplicarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                                CommandParameter="{Binding}" 
+                                                Margin="0,0,8,0" Height="28" FontSize="11"
+                                                Style="{StaticResource MaterialDesignFlatButton}" Background="#252525" Foreground="#EAEAEA"
+                                                Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="4" Padding="0"/>
+
+                                        <Button Grid.Column="1" Width="28" Height="28" Padding="0"
+                                                Command="{Binding DataContext.DeletarWallpaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                                CommandParameter="{Binding}" 
+                                                Style="{StaticResource MaterialDesignFlatButton}" Foreground="#888888"
+                                                Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="4" ToolTip="Remover">
+                                            <materialDesign:PackIcon Kind="TrashCanOutline" Width="16" Height="16"/>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </Window>

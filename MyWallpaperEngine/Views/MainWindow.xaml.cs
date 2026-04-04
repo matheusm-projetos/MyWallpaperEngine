@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using WinForms = System.Windows.Forms;
 
 namespace MyWallpaperEngine.Views
@@ -14,6 +15,26 @@ namespace MyWallpaperEngine.Views
         {
             InitializeComponent();
             ConfigurarModoFantasma();
+        }
+
+        //Permite arrastar a janela por clicar na falsa borda
+        private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
+        }
+
+        //botão minimizar customizado
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            FecharAplicativo();
         }
 
         private void ConfigurarModoFantasma()
